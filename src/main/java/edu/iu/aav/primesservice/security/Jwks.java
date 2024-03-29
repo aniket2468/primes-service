@@ -1,15 +1,16 @@
 package edu.iu.aav.primesservice.security;
 
-import com.nimbusds.jose.jwk.*;
 
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
+import com.nimbusds.jose.jwk.RSAKey;
 
 public class Jwks {
-    private Jwks() {}
+    private Jwks() {
+    }
 
     public static RSAKey generateRsa() {
         KeyPair keyPair = KeyGeneratorUtils.generateRsaKey();

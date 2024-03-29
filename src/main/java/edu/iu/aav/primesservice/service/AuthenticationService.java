@@ -1,9 +1,7 @@
 package edu.iu.aav.primesservice.service;
 
+import java.io.IOException;
 
-import edu.iu.aav.primesservice.model.Customer;
-
-import edu.iu.aav.primesservice.repository.IAuthenticationRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,11 +9,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import edu.iu.aav.primesservice.model.Customer;
+import edu.iu.aav.primesservice.repository.IAuthenticationRepository;
 
-@Service
-public class AuthenticationService implements IAuthenticationService,UserDetailsService {
-    IAuthenticationRepository authenticationRepository;
+@Service("authenticationService")
+public class AuthenticationService implements IAuthenticationService, UserDetailsService {
+
+    private IAuthenticationRepository authenticationRepository;
 
     public AuthenticationService(IAuthenticationRepository authenticationRepository) {
         this.authenticationRepository = authenticationRepository;
@@ -30,21 +30,28 @@ public class AuthenticationService implements IAuthenticationService,UserDetails
     }
 
     @Override
+    public boolean login(String username, String password) throws IOException {
+        Customer customer = authenticationRepository.findByUsername(username);
+        if (customer != null) {
+            BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
+            if (bc.matches(password, customer.getPassword())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
             Customer customer = authenticationRepository.findByUsername(username);
-            if(customer == null) {
+            if (customer == null) {
                 throw new UsernameNotFoundException("");
             }
             return User.withUsername(username).password(customer.getPassword()).build();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public boolean login(String username, String password) throws IOException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'login'");
-    }
 }

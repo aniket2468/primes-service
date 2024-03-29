@@ -1,10 +1,5 @@
 package edu.iu.aav.primesservice.security;
 
-
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,13 +18,16 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import com.nimbusds.jose.jwk.RSAKey;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-
 public class SecurityConfig {
     private RSAKey rsaKey;
 
@@ -38,7 +36,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    JWKSource<SecurityContext> jwkSource() {
+    public JWKSource<SecurityContext> jwkSource() {
         JWKSet jwkSet = new JWKSet(rsaKey);
         return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
     }
@@ -55,18 +53,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .cors(Customizer.withDefaults())
-                .csrf(x -> x.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                HttpMethod.POST, "/register", "/login").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
-                .build();
+        return http.cors(Customizer.withDefaults()).csrf(x -> x.disable())
+                .authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.POST, "/", "/primes", "/register", "/login").permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())).build();
     }
 
     @Bean
@@ -76,4 +67,5 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
         return new ProviderManager(authProvider);
     }
+
 }
