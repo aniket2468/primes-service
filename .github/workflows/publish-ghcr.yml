@@ -30,9 +30,8 @@ jobs:
           reporter: java-junit
           fail-on-error: true
 
-
       - name: Build and push the image
         run: |
           docker login --username aniket2468 --password ${{secrets.ACCESS_TOKEN}} ghcr.io
-          docker build -t ghcr.io/aniket2468/prime-service:latest --file Dockerfile .  
-          docker push ghcr.io/aniket2468/prime-service:latest
+                docker build -t ghcr.io/aniket2468/primes-service:latest --file Dockerfile .  
+                docker push ghcr.io/aniket2468/primes-service:latest
