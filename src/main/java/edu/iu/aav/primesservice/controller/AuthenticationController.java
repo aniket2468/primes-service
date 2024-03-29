@@ -31,6 +31,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public boolean register(@RequestBody Customer customer) {
+        System.out.println("In Registers");
         try {
             return authenticationService.register(customer);
         } catch (IOException e) {
