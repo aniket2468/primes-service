@@ -41,7 +41,10 @@ public class AuthenticationFileRepository implements IAuthenticationRepository {
             Path path = Paths.get(DATABASE_NAME);
             String data = String.format("%1$s, %2$s", customer.getUsername(), customer.getPassword());
             data+=NEW_LINE;
-            Files.write(path, data.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Files.write(path,
+                    data.getBytes(StandardCharsets.UTF_8),
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND);
             return true;
         }
         return false;
@@ -54,7 +57,7 @@ public class AuthenticationFileRepository implements IAuthenticationRepository {
         for (String line : data) {
             if (line != null && !line.trim().isEmpty()) {
                 String[] properties = line.split(",");
-                if (properties != null && properties[0].trim().equalsIgnoreCase(username.trim())) {
+                if (properties[0].trim().equalsIgnoreCase(username.trim())) {
                     return new Customer(properties[0].trim(), properties[1].trim());
                 }
             }
