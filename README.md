@@ -1,4 +1,4 @@
 # Software Engineering Practicum
-## Group Members -
-#### Aniket Sharma
-#### Archita Palkar
+### Group Members
+#### - Aniket Sharma
+#### - Archita Palkar
